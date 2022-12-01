@@ -59,7 +59,6 @@ final class User extends Domain
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'type_id' => $this->type_id,
-            'password' => $this->password,
             'personal_data' => $this->personal_data->toArray(),
             'created_at' => $this->created_at->format($this->DATE_FORMAT_OUTPUT),
             'updated_at' => $this->updated_at->format($this->DATE_FORMAT_OUTPUT),

@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
+        PrescriptionSubmitted::class => [
+            UploadFileToCloud::class
+        ],
         CreatedUserEvent::class => [
             SendVerificationNotification::class,
             AssignRolesByUserType::class,

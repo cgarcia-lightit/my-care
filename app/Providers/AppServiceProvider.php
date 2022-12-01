@@ -13,6 +13,8 @@ use MyCare\Shared\Infrastructure\Response\ResponseInterface;
 use MyCare\Shared\Infrastructure\User\UserRepository;
 use MyCare\Shared\Infrastructure\User\UserRoleRepository;
 use MyCare\Shared\Infrastructure\User\UserTypeRepository;
+use MyCare\Submissions\Domain\SubmissionRepositoryInterface;
+use MyCare\Submissions\Infrastructure\SubmissionRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserTypeRepositoryInterface::class, UserTypeRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UserRolesRepositoryInterface::class, UserRoleRepository::class);
+        $this->app->bind(SubmissionRepositoryInterface::class, SubmissionRepository::class);
     }
 
     /**

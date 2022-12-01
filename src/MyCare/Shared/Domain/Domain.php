@@ -25,7 +25,6 @@ abstract class Domain extends Printable
         $events = $this->events;
         $this->events = [];
         return $events;
-
     }
 
     /**
