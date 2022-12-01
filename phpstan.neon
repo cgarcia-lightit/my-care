@@ -4,9 +4,13 @@ includes:
 parameters:
     paths:
         - app
+        - src
 
     # The level 8 is the highest level
     level: 0
 
     ignoreErrors:
         - '#Static call to instance method .*?::dispatch(Now)?\(\)\.#'
+        - '#Global helper function .*? should not be used.#'
+        - '#PHPUnit tests are not allowed. Please use Pest PHP instead. If this is a TestCase, make it abstract to pass validation.#'
+        - '#Method .*?::.*?\(\) has no return type specified.#'
