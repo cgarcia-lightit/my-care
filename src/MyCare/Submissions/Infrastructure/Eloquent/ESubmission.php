@@ -67,6 +67,23 @@ final class ESubmission extends Model
             );
     }
 
+    public function scopeCreateUsingDomain($query, Submission $submission)
+    {
+        return $query->create(
+            [
+                'id' => $submission->getId(),
+                'title' => $submission->getTitle(),
+                'symptoms' => $submission->getSymptoms(),
+                'status' => $submission->getStatus()->name,
+                'patient_id' => $submission->getPatient()->getId(),
+                'doctor_id' => $submission->getDoctor()?->getId(),
+                'prescriptions' => $submission->getPrescriptions(),
+                'created_at' => $submission->getCreatedAt()->format('Y-m-d H:i:s'),
+                'updated_at' => $submission->getUpdatedAt()->format('Y-m-d H:i:s'),
+                'deleted_at' => $submission->getDeletedAt()?->format('Y-m-d H:i:s'),
+            ]
+        );
+    }
 
     /**
      * @throws Exception

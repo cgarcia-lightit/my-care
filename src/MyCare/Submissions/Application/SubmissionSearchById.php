@@ -17,7 +17,7 @@ final class SubmissionSearchById
     public function __construct(
         private readonly SubmissionRepositoryInterface $repository,
     ) {
-        $this->finder = new SubmissionFinder($this->repository);
+        $this->finder = new SubmissionFinder($repository);
     }
 
     /**

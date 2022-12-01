@@ -16,6 +16,12 @@ interface SubmissionRepositoryInterface
     public function save(Submission $submission): Submission;
 
     /**
+     * @param  Submission $submission
+     * @return Submission
+     */
+    public function create(Submission $submission): Submission;
+
+    /**
      * @param  Identifier $identifier
      * @return Submission|null
      */

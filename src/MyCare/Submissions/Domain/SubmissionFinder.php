@@ -6,6 +6,7 @@ namespace MyCare\Submissions\Domain;
 
 use Exception;
 use MyCare\Shared\Domain\ValueObj\Identifier;
+use MyCare\Submissions\Infrastructure\Eloquent\ESubmission;
 
 final class SubmissionFinder
 {
@@ -19,7 +20,11 @@ final class SubmissionFinder
      */
     public function __invoke(Identifier $id): ?Submission
     {
-        $submission = $this->repository->find($id) or throw new Exception("Submission ${$id} not found.");
+        $submission = $this->repository->find($id);
+
+        if (!$submission) {
+            throw new Exception("Submission $id not found.");
+        }
 
         return $submission;
     }

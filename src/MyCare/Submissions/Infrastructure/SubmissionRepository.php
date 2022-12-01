@@ -16,6 +16,15 @@ final class SubmissionRepository implements SubmissionRepositoryInterface
     /**
      * @throws Exception
      */
+    public function create(Submission $submission): Submission
+    {
+        ESubmission::query()->createUsingDomain($submission);
+        return $submission;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function save(Submission $submission): Submission
     {
         ESubmission::query()->updateUsingDomain($submission);

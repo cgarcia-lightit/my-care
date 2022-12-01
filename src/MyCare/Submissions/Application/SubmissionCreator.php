@@ -30,7 +30,7 @@ final class SubmissionCreator
     {
         try {
 
-            $submission = $this->repository->save(
+            $submission = $this->repository->create(
                 new Submission(
                     id: new Identifier(),
                     title: $title,
