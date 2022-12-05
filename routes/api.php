@@ -15,6 +15,7 @@ use MyCare\Submissions\Infrastructure\GetAllUsersTypesController;
 use MyCare\Submissions\Infrastructure\GetDoctorSubmissionsController;
 use MyCare\Submissions\Infrastructure\GetSubmissionController;
 use MyCare\Submissions\Infrastructure\GetSubmissionsController;
+use MyCare\Submissions\Infrastructure\GetSubmissionsPrescriptionsController;
 use MyCare\Submissions\Infrastructure\GetUserSubmissionsController;
 use MyCare\Submissions\Infrastructure\UpdateSubmissionController;
 
@@ -41,6 +42,10 @@ Route::middleware(['auth:sanctum'])->group(
             ['prefix' => '/submissions'], function () {
                 Route::get('/', GetSubmissionsController::class)
                     ->name('get-submissions')
+                    ->middleware(['can:submissions.view']);
+
+                Route::get('/{submission_id}/prescriptions', GetSubmissionsPrescriptionsController::class)
+                    ->name('get-submission-prescriptions')
                     ->middleware(['can:submissions.view']);
 
                 Route::get('/{submission_id}', GetSubmissionController::class)

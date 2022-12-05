@@ -8,10 +8,12 @@ final class OutDto
 {
 
     /**
-     * @param null $data
+     * @param mixed      $data
+     * @param int|string $code
+     * @param string     $errorMessage
      */
     public function __construct(
-        private $data = null,
+        private mixed $data = null,
         private int|string $code = 200,
         private string $errorMessage = ''
     ) {

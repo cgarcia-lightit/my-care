@@ -19,7 +19,7 @@ final class SubmissionUpdater
 
     public function __construct(
         private readonly SubmissionRepositoryInterface $repository,
-        private readonly User $user
+        private readonly User                          $user
     ) {
         $this->submissionFinder = new SubmissionFinder($repository);
     }
@@ -29,7 +29,7 @@ final class SubmissionUpdater
      * @param  $data
      * @return OutDto
      */
-    public function __invoke($id, $data): OutDto
+    public function __invoke(string $id, array $data): OutDto
     {
         try {
 
@@ -39,9 +39,6 @@ final class SubmissionUpdater
                 throw new ResourceNotFoundException('Submission not found');
             }
 
-            if (isset($data['status'])) {
-                $submission->updateStatus(SubmissionStatus::from($data['status']));
-            }
 
             $submission->setDoctor($this->user);
 
@@ -49,12 +46,16 @@ final class SubmissionUpdater
                 $submission->attachPrescription($data['prescriptions']);
             }
 
+            if (isset($data['status'])) {
+                $submission->updateStatus(SubmissionStatus::from($data['status']));
+            }
+
             $this->repository->save($submission);
 
             $successCode = 200;
             if ($submission->hasUnreadEvents()) {
                 $events = $submission->pullEvents();
-                foreach ($events as $event ) {
+                foreach ($events as $event) {
                     event($event);
                 }
 
@@ -62,7 +63,7 @@ final class SubmissionUpdater
             }
 
             return new OutDto(
-                data:  $submission,
+                data: $submission->toShow(),
                 code: $successCode,
             );
 

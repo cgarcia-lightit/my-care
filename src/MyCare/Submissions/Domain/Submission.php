@@ -16,23 +16,6 @@ use MyCare\Submissions\Domain\ValueObj\SubmissionStatus;
 
 final class Submission extends Domain
 {
-    /**
-     * @return string|null
-     */
-    public function getPrescriptions(): ?string
-    {
-        return $this->prescriptions;
-    }
-
-    /**
-     * @param  string|null $prescriptions
-     * @return void
-     */
-    public function setPrescriptions(?string $prescriptions): void
-    {
-        $this->prescriptions = $prescriptions;
-    }
-
     use UseDate;
 
     /**
@@ -189,6 +172,23 @@ final class Submission extends Domain
     }
 
     /**
+     * @return string|null
+     */
+    public function getPrescriptions(): ?string
+    {
+        return $this->prescriptions;
+    }
+
+    /**
+     * @param  string|null $prescriptions
+     * @return void
+     */
+    public function setPrescriptions(?string $prescriptions): void
+    {
+        $this->prescriptions = $prescriptions;
+    }
+
+    /**
      * @throws Exception
      */
     public function updateStatus(SubmissionStatus $nextStatus): void
@@ -238,24 +238,19 @@ final class Submission extends Domain
     /**
      * @param $prescriptions
      */
-    public function attachPrescription($prescriptions): void
+    public function attachPrescription(mixed $prescriptions): void
     {
-        $fileName = uniqid('prescription-');
-        $path = "/MyCare/Submissions/$this->id/$fileName." . $prescriptions->clientExtension();
-        $this->prescriptions = $path;
         $this->pushEvent(new PrescriptionSubmitted($this, $prescriptions));
     }
 
-    /**
-     * @return array
-     */
-    public function getUsers(): array
+    public function getPathPrescription(): string
     {
-        return array_filter(
-            [
-                'patient' => $this->patient->get(),
-                'doctor' => $this->doctor?->get(),
-            ], fn($value) => !is_null($value)
-        );
+        return "/MyCare/Prescriptions/$this->id/prescriptions.txt";
+    }
+
+    public function userCanReadPrescription(User $user): bool
+    {
+        return $this->getPatient()->getId() === $user->getId() ||
+            $this->getDoctor()?->getId() === $user->getId();
     }
 }

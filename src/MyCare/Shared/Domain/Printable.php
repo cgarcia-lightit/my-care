@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace MyCare\Shared\Domain;
 
 use Illuminate\Database\Eloquent\JsonEncodingException;
+use JsonSerializable;
 
-abstract class Printable
+abstract class Printable implements JsonSerializable
 {
     abstract function toArray(): array;
 
