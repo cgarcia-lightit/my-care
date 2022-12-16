@@ -6,8 +6,6 @@ namespace MyCare\Submissions\Infrastructure;
 
 use App\Http\Controllers\Controller;
 
-;
-
 use Illuminate\Http\Request;
 use MyCare\Submissions\Application\SubmissionsPrescriptionFinder;
 
@@ -23,14 +21,12 @@ final class GetSubmissionsPrescriptionsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param string $submissionId
+     * @param  Request $request
+     * @param  string  $submissionId
      * @return mixed
      */
-    public function __invoke(
-        Request $request,
-        string  $submissionId
-    ) {
+    public function __invoke(Request $request, string $submissionId)
+    {
         return $this->finder->__invoke(
             $request->user()->getDomain(),
             $submissionId
