@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+namespace Tests\MyCare\Submissions;
+
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use MyCare\Shared\Application\OutDto;
 use MyCare\Shared\Domain\ValueObj\Identifier;
@@ -22,13 +26,12 @@ class SubmissionTest extends TestCase
 
     public function testSaveSubmissions()
     {
-        $user = User::factory()
-            ->create();
+        $user = $this->getUser();
 
         $this->actingAs($user);
 
         $ucase = (new SubmissionCreator(new SubmissionRepository(), $user->getDomain()))(
-            title:    'Title saraza',
+            title: 'Title saraza',
             symptoms: 'Description saraza'
         );
 
@@ -39,13 +42,12 @@ class SubmissionTest extends TestCase
 
     public function testGetSubmissions()
     {
-        $user = User::factory()
-            ->create();
+        $user = $this->getUser();
 
         $this->actingAs($user);
 
         (new SubmissionCreator(new SubmissionRepository(), $user->getDomain()))(
-            title:    'Title saraza',
+            title: 'Title saraza',
             symptoms: 'Description saraza'
         );
 
@@ -58,15 +60,14 @@ class SubmissionTest extends TestCase
 
     public function testGetSubmissionById()
     {
-        $user = User::factory()
-            ->create();
+        $user = $this->getUser();
 
         $this->actingAs($user);
 
         $repository = new SubmissionRepository();
 
         $result = (new SubmissionCreator($repository, $user->getDomain()))(
-            title:    'Title saraza',
+            title: 'Title saraza',
             symptoms: 'Description saraza'
         );
 
@@ -85,25 +86,15 @@ class SubmissionTest extends TestCase
 
     public function testDeleteSubmission()
     {
-        $user = User::factory()
-            ->has(
-                EPersonalData::factory()
-                    ->count(1)
-                    ->state(
-                        function (array $attributes, User $user) {
-                            $attributes['id'] = new Identifier($user->id);
-                            return $attributes;
-                        }
-                    ), 'personalData'
-            )
-            ->create();
+        $user = $this->getUser();
 
         $this->actingAs($user);
 
         $result = (new SubmissionCreator(new SubmissionRepository(), $user->getDomain()))(
-            title:    'Title saraza',
+            title: 'Title saraza',
             symptoms: 'Description saraza'
         );
+
         $submissionCreated = $result->getData();
 
         $result = (new SubmissionDeleter(new SubmissionRepository()))(
@@ -112,5 +103,28 @@ class SubmissionTest extends TestCase
 
         $this->assertInstanceOf(OutDto::class, $result);
         $this->assertTrue($result->isSuccess(), $result->getErrorMessage());
+    }
+
+    /**
+     * @return User
+     */
+    private function getUser(): User
+    {
+        /**
+         * @var User $user
+         */
+        $user = User::factory()
+            ->has(
+                EPersonalData::factory()
+                    ->count(1)
+                    ->state(
+                        function (array $attributes, Model $user) {
+                            $attributes['id'] = new Identifier($user->getAttribute('id'));
+                            return $attributes;
+                        }
+                    ), 'personalData'
+            )
+            ->create();
+        return $user;
     }
 }

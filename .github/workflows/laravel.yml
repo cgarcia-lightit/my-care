@@ -1,0 +1,80 @@
+name: Testing Laravel with Mysql
+on:
+  push:
+    paths:
+      - '**.php'
+      - 'phpunit.xml'
+      - '.github/workflows/ci.yml'
+      - 'composer.lock'
+  pull_request:
+    paths:
+      - '**.php'
+      - 'phpunit.xml'
+      - '.github/workflows/ci.yml'
+      - 'composer.lock'
+jobs:
+  laravel:
+    runs-on: ubuntu-latest
+    container:
+      image: kirschbaumdevelopment/laravel-test-runner:8.1
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: big
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Install composer dependencies
+        run: |
+          composer install --no-scripts
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Show Laravel versions
+        run: php artisan --version
+
+      - name: Show dir
+        run: pwd
+
+      - name: PHP Version
+        run: php --version
+
+      - name: Run Testsuite
+        run: vendor/bin/phpunit
+        # Set environment
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: mysql
+          DB_PORT: 3306
+          DB_DATABASE: big
+          DB_USERNAME: root
+          DB_PASSWORD: password
+
+      - name: Execute Code Static Analysis (PHP Stan + Larastan + Php Cs Fixer)
+        run: |
+          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G --no-progress
+          vendor/bin/php-cs-fixer fix --dry-run
+    # Example: Deploy to Laravel Forge
+    # - name: Deploy to Laravel Forge
+    #   run: curl ${{ secrets.FORGE_STAGING_WEBHOOK }}
